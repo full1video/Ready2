@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Link Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        h1 {
+            color: #1877f2;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+
+        input[type="text"], 
+        input[type="file"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        button {
+            background: #1877f2;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            width: 100%;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #165dbb;
+        }
+
+        #result {
+            margin-top: 2rem;
+            display: none;
+        }
+
+        .generated-link {
+            word-break: break-all;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 6px;
+            margin-top: 1rem;
+            border: 1px dashed #ddd;
+        }
+
+        #copyBtn {
+            margin-top: 1rem;
+            background: #42b72a;
+            width: auto;
+        }
+
+        #copyBtn:hover {
+            background: #369423;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Image Link Generator</h1>
+        
+        <div class="input-group">
+            <label for="targetLink">টার্গেট লিংক</label>
+            <input type="text" id="targetLink" placeholder="https://example.com">
+        </div>
+
+        <div class="input-group">
+            <label for="imageUpload">ইমেজ আপলোড করুন</label>
+            <input type="file" id="imageUpload" accept="image/*">
+        </div>
+
+        <button onclick="generateLink()">লিংক তৈরি করুন</button>
+
+        <div id="result">
+            <p class="generated-link" id="generatedLink"></p>
+            <button id="copyBtn" onclick="copyLink()">কপি করুন</button>
+        </div>
+    </div>
+
+    <script>
+        function generateLink() {
+            const targetLink = document.getElementById('targetLink').value;
+            const imageInput = document.getElementById('imageUpload');
+            
+            if(!targetLink || !imageInput.files[0]) {
+                alert('দয়া করে লিংক এবং ইমেজ নির্বাচন করুন');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const imageData = e.target.result;
+                const encodedLink = encodeURIComponent(targetLink);
+                const encodedImage = encodeURIComponent(imageData);
+                
+                const generatedLink = `${window.location.href}viewer.html?url=${encodedLink}&img=${encodedImage}`;
+                
+                document.getElementById('generatedLink').textContent = generatedLink;
+                document.getElementById('result').style.display = 'block';
+            }
+            reader.readAsDataURL(imageInput.files[0]);
+        }
+
+        function copyLink() {
+            const link = document.getElementById('generatedLink').textContent;
+            navigator.clipboard.writeText(link)
+                .then(() => alert('লিংক কপি হয়েছে!'))
+                .catch(err => console.error('কপি করতে সমস্যা হয়েছে:', err));
+        }
+    </script>
+</body>
+</html>
